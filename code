@@ -1,0 +1,27 @@
+import csv
+import sqlite3
+import pandas as pd
+import codecs
+import pyodbc
+import sys
+
+conn = pyodbc.connect("Driver={SQL Server Native Client 11.0};"
+                      "Server=server_name;"
+                      "Database=db_name;"
+                      "Trusted_Connection=yes;"
+                      "UID=user;"
+                      "PWD=password;")
+
+cursor = conn.cursor()
+cursor.execute('DROP TABLE table_name')
+cursor.execute('CREATE TABLE table_name(col1 datatype(100),col2 datatype(100),col3 datatype(100))')
+
+df=pd.read_csv(r'file.txt', sep='\t', encoding='utf8')
+rownum=0
+for index,rows in df.iterrows():
+      cursor.execute("""INSERT INTO table_namr
+                        VALUES(?,?,?)""",df['col1'][rownum],df['col2'][rownum],df['col3'][rownum])
+      rownum+=1
+
+conn.commit()
+cursor.close()
